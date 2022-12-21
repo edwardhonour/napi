@@ -1,0 +1,353 @@
+<?php
+
+require 'vendor/autoload.php';
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+require_once('/var/www/classes/class.XRDB.php');
+
+$spreadsheet = new Spreadsheet();
+$spreadsheet->getActiveSheet()->setTitle('Company');
+//$worksheet1 = $spreadsheet->createSheet();
+//$worksheet1->setTitle('Enrollment');
+$sheet = $spreadsheet->getActiveSheet();
+
+ini_set('display_errors',1);
+ini_set('display_startup_errors',1);
+//-------------------------------------------------------------------------------
+//  Styles
+//-------------------------------------------------------------------------------
+//
+
+$styleArrayEnrollment = [
+    'font' => [
+        'bold' => true,
+    ],
+    'alignment' => [
+        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
+        'height' => '10',
+    ],
+    'borders' => [
+        'top' => [
+            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+        ],
+        'bottom' => [
+            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+        ],
+        'left' => [
+            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+        ],
+        'right' => [
+            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+        ],
+    ],
+    'fill' => [
+        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+    ],
+];
+
+$styleArrayBold = [
+    'font' => [
+        'bold' => true,
+    ],
+    'alignment' => [
+        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
+    ],
+    'borders' => [
+        'top' => [
+            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+        ],
+        'bottom' => [
+            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+        ],
+        'left' => [
+            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+        ],
+        'right' => [
+            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+        ],
+    ],
+    'fill' => [
+        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+    ],
+];
+
+$styleArrayHead = [
+    'font' => [
+        'bold' => true,
+        'size' => '24',
+    ],
+];
+
+$styleArray = [
+    'font' => [
+        'bold' => true,
+        'size' => '12',
+    ],
+    'borders' => [
+        'top' => [
+            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+        ],
+        'bottom' => [
+            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+        ],
+        'left' => [
+            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+        ],
+        'right' => [
+            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+        ],
+    ],
+    'fill' => [
+        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+    ],
+];
+$X=new XRDB();
+
+
+//if (isset($argv[1])) { $_GET['id']=$argv[1]; $_GET['display']="F"; }
+//if (isset($argv[2])) { $_GET['display']=$argv[2]; }
+
+//if (isset($argv[1])) { $_GET['id']=$argv[1]; $_GET['display']="F"; }
+//if (isset($argv[2])) { $_GET['id']=$argv[1]; $_GET['display']="F"; }
+//if (isset($argv[3])) { $_GET['display']=$argv[3]; }
+
+        $month_id = "2022-04";
+
+        $company_id = 5556;
+        if ($company_id=="ALL") {
+                $sql="select * from nua_company order by id";
+        } else {
+                $sql="select * from nua_company where id = " . $company_id;
+        }
+        $list=$X->sql($sql);
+        foreach($list as $bbb) {
+                 $company = $bbb;
+                 $company_id = $bbb['id'];
+
+                 //-- Column Widths
+                 $spreadsheet->getActiveSheet()->getColumnDimension('A')->setWidth(32);
+                 $spreadsheet->getActiveSheet()->getColumnDimension('B')->setWidth(42);
+                 $spreadsheet->getActiveSheet()->getColumnDimension('C')->setWidth(32);
+                 $spreadsheet->getActiveSheet()->getColumnDimension('D')->setWidth(42);
+                 //-- Company Name Title
+                 //
+                 $spreadsheet->getActiveSheet()->getStyle('A1')->applyFromArray($styleArrayHead);
+                 $sheet->setCellValue('A1', $company['company_name']);
+
+                 //-- Company ID
+                 $sheet->setCellValue('A3', "ID");
+                 $spreadsheet->getActiveSheet()->getStyle('B3')->applyFromArray($styleArrayBold);
+                 $spreadsheet->getActiveSheet()->getStyle('B3')->getFill()->getStartColor()->setARGB('DDDDDDDD');
+                 $sheet->setCellValue('B3', $company['id']);
+
+                //-- Company Name
+                 $sheet->setCellValue('A4', "Company Name");
+                 $spreadsheet->getActiveSheet()->getStyle('B4')->applyFromArray($styleArrayBold);
+                 $spreadsheet->getActiveSheet()->getStyle('B4')->getFill()->getStartColor()->setARGB('DDDDDDDD');
+                 $sheet->setCellValue('B4', $company['company_name']);
+
+                 //-- Broker Name
+                 $sheet->setCellValue('A5', "Broker Name");
+                 $spreadsheet->getActiveSheet()->getStyle('B5')->applyFromArray($styleArrayBold);
+                 $spreadsheet->getActiveSheet()->getStyle('B5')->getFill()->getStartColor()->setARGB('DDDDDDDD');
+                 $sheet->setCellValue('B5', $company['company_name']);
+
+                 //-- Broker Email
+                 $sheet->setCellValue('A6', "Broker Email");
+                 $spreadsheet->getActiveSheet()->getStyle('B6')->applyFromArray($styleArrayBold);
+                 $spreadsheet->getActiveSheet()->getStyle('B6')->getFill()->getStartColor()->setARGB('DDDDDDDD');
+                 $sheet->setCellValue('B6', $company['company_name']);
+
+                 //-- Company Type
+                 $sheet->setCellValue('A7', "Company Type");
+                 $spreadsheet->getActiveSheet()->getStyle('B7')->applyFromArray($styleArrayBold);
+                 $spreadsheet->getActiveSheet()->getStyle('B7')->getFill()->getStartColor()->setARGB('DDDDDDDD');
+                 $sheet->setCellValue('B7', $company['company_type']);
+
+                 //-- Tax ID
+                 $sheet->setCellValue('A8', "Tax ID");
+                 $spreadsheet->getActiveSheet()->getStyle('B8')->applyFromArray($styleArrayBold);
+                 $spreadsheet->getActiveSheet()->getStyle('B8')->getFill()->getStartColor()->setARGB('DDDDDDDD');
+                 $sheet->setCellValue('B8', $company['tax_id']);
+
+                 //-- Contact Name
+                 $sheet->setCellValue('A9', "Contact Name");
+                 $spreadsheet->getActiveSheet()->getStyle('B9')->applyFromArray($styleArrayBold);
+                 $spreadsheet->getActiveSheet()->getStyle('B9')->getFill()->getStartColor()->setARGB('DDDDDDDD');
+                 $sheet->setCellValue('B9', $company['contact_phone']);
+
+                 //-- Contact Email
+                 $sheet->setCellValue('A10', "Contact Email");
+                 $spreadsheet->getActiveSheet()->getStyle('B10')->applyFromArray($styleArrayBold);
+                 $spreadsheet->getActiveSheet()->getStyle('B10')->getFill()->getStartColor()->setARGB('DDDDDDDD');
+                 $sheet->setCellValue('B10', $company['contact_email']);
+
+                 //-- Contact Email
+                 $sheet->setCellValue('C3', "Company Address");
+                 $spreadsheet->getActiveSheet()->getStyle('D3')->applyFromArray($styleArrayBold);
+                 $spreadsheet->getActiveSheet()->getStyle('D3')->getFill()->getStartColor()->setARGB('DDDDDDDD');
+                 $sheet->setCellValue('D3', $company['address']);
+
+                 //-- Suite
+                 $sheet->setCellValue('C4', "Line 2");
+                 $spreadsheet->getActiveSheet()->getStyle('D4')->applyFromArray($styleArrayBold);
+                 $spreadsheet->getActiveSheet()->getStyle('D4')->getFill()->getStartColor()->setARGB('DDDDDDDD');
+                 $sheet->setCellValue('D4', $company['suite']);
+
+                 //-- City
+                 $sheet->setCellValue('C5', "City");
+                 $spreadsheet->getActiveSheet()->getStyle('D5')->applyFromArray($styleArrayBold);
+                 $spreadsheet->getActiveSheet()->getStyle('D5')->getFill()->getStartColor()->setARGB('DDDDDDDD');
+                 $sheet->setCellValue('D5', $company['city']);
+
+                 //-- State
+                 $sheet->setCellValue('C6', "State");
+                 $spreadsheet->getActiveSheet()->getStyle('D6')->applyFromArray($styleArrayBold);
+                 $spreadsheet->getActiveSheet()->getStyle('D6')->getFill()->getStartColor()->setARGB('DDDDDDDD');
+                 $sheet->setCellValue('D6', $company['state']);
+
+                 //-- Zip
+                 $sheet->setCellValue('C7', "Zip");
+                 $spreadsheet->getActiveSheet()->getStyle('D7')->applyFromArray($styleArrayBold);
+                 $spreadsheet->getActiveSheet()->getStyle('D7')->getFill()->getStartColor()->setARGB('DDDDDDDD');
+                 $sheet->setCellValue('D7', $company['zip']);
+
+                 //-- Website
+                 $sheet->setCellValue('C8', "Website");
+                 $spreadsheet->getActiveSheet()->getStyle('D8')->applyFromArray($styleArrayBold);
+                 $spreadsheet->getActiveSheet()->getStyle('D8')->getFill()->getStartColor()->setARGB('DDDDDDDD');
+                 $sheet->setCellValue('D8', $company['website']);
+
+                 //-- Billing Address
+                 $sheet->setCellValue('C10', "Billing Address");
+
+                 //-- Company Name
+                 $sheet->setCellValue('C11', "Company Name");
+                 $spreadsheet->getActiveSheet()->getStyle('D11')->applyFromArray($styleArrayBold);
+                 $spreadsheet->getActiveSheet()->getStyle('D11')->getFill()->getStartColor()->setARGB('DDDDDDDD');
+                 $sheet->setCellValue('D11', $company['billing_company_name']);
+
+                 //-- Mailing Address
+                 $sheet->setCellValue('C12', "Address");
+                 $spreadsheet->getActiveSheet()->getStyle('D12')->applyFromArray($styleArrayBold);
+                 $spreadsheet->getActiveSheet()->getStyle('D12')->getFill()->getStartColor()->setARGB('DDDDDDDD');
+                 $sheet->setCellValue('D12', $company['invoice_mailing_address']);
+
+                 //-- Invoice Suite
+                 $sheet->setCellValue('C12', "Suite");
+                 $spreadsheet->getActiveSheet()->getStyle('D12')->applyFromArray($styleArrayBold);
+                 $spreadsheet->getActiveSheet()->getStyle('D12')->getFill()->getStartColor()->setARGB('DDDDDDDD');
+                 $sheet->setCellValue('D12', $company['invoice_suite']);
+
+
+                 //-- Invoice City
+                 $sheet->setCellValue('C12', "City");
+                 $spreadsheet->getActiveSheet()->getStyle('D13')->applyFromArray($styleArrayBold);
+                 $spreadsheet->getActiveSheet()->getStyle('D13')->getFill()->getStartColor()->setARGB('DDDDDDDD');
+                 $sheet->setCellValue('D13', $company['invoice_city']);
+
+                 //-- Invoice State
+                 $sheet->setCellValue('C14', "State");
+                 $spreadsheet->getActiveSheet()->getStyle('D14')->applyFromArray($styleArrayBold);
+                 $spreadsheet->getActiveSheet()->getStyle('D14')->getFill()->getStartColor()->setARGB('DDDDDDDD');
+                 $sheet->setCellValue('D14', $company['invoice_state']);
+
+                 //-- Invoice Zip
+                 //
+                 $sheet->setCellValue('C15', "Zip");
+                 $spreadsheet->getActiveSheet()->getStyle('D15')->applyFromArray($styleArrayBold);
+                 $spreadsheet->getActiveSheet()->getStyle('D15')->getFill()->getStartColor()->setARGB('DDDDDDDD');
+                 $sheet->setCellValue('D15', $company['invoice_zip']);
+
+                 //-- Invoice Contact Name
+                 $sheet->setCellValue('C17', "Billing Contact Name");
+                 $spreadsheet->getActiveSheet()->getStyle('D17')->applyFromArray($styleArrayBold);
+                 $spreadsheet->getActiveSheet()->getStyle('D17')->getFill()->getStartColor()->setARGB('DDDDDDDD');
+                 $sheet->setCellValue('D17', $company['billing_contact_name']);
+
+                 //-- Invoice Contact Phone
+                 $sheet->setCellValue('C18', "Billing Contact Phone");
+                 $spreadsheet->getActiveSheet()->getStyle('D18')->applyFromArray($styleArrayBold);
+                 $spreadsheet->getActiveSheet()->getStyle('D18')->getFill()->getStartColor()->setARGB('DDDDDDDD');
+                 $sheet->setCellValue('D18', $company['billing_contact_name']);
+
+                 //-- Billing Contact Email
+                 $sheet->setCellValue('C19', "Billing Contact Email");
+                 $spreadsheet->getActiveSheet()->getStyle('D19')->applyFromArray($styleArrayBold);
+                 $spreadsheet->getActiveSheet()->getStyle('D19')->getFill()->getStartColor()->setARGB('DDDDDDDD');
+                 $sheet->setCellValue('D19', $company['billing_contact_email']);
+
+                 //-- Billing Contact Email
+                 $sheet->setCellValue('C20', "Billing Contact Email 2");
+                 $spreadsheet->getActiveSheet()->getStyle('D20')->applyFromArray($styleArrayBold);
+                 $spreadsheet->getActiveSheet()->getStyle('D20')->getFill()->getStartColor()->setARGB('DDDDDDDD');
+                 $sheet->setCellValue('D20', $company['billing_contact_email2']);
+
+                 //-- Billing Contact Email
+                 $sheet->setCellValue('C21', "Billing Contact Email 3");
+                 $spreadsheet->getActiveSheet()->getStyle('D21')->applyFromArray($styleArrayBold);
+                 $spreadsheet->getActiveSheet()->getStyle('D21')->getFill()->getStartColor()->setARGB('DDDDDDDD');
+                 $sheet->setCellValue('D21', $company['billing_contact_email3']);
+
+                 //-- Billing Contact Email
+                 $sheet->setCellValue('C22', "Billing Contact Email 4");
+                 $spreadsheet->getActiveSheet()->getStyle('D22')->applyFromArray($styleArrayBold);
+                 $spreadsheet->getActiveSheet()->getStyle('D22')->getFill()->getStartColor()->setARGB('DDDDDDDD');
+                 $sheet->setCellValue('D22', $company['billing_contact_email4']);
+
+
+                 //-- Billing Contact Email
+                 $sheet->setCellValue('C23', "Billing Contact Email 5");
+                 $spreadsheet->getActiveSheet()->getStyle('D23')->applyFromArray($styleArrayBold);
+                 $spreadsheet->getActiveSheet()->getStyle('D23')->getFill()->getStartColor()->setARGB('DDDDDDDD');
+                 $sheet->setCellValue('D23', $company['billing_contact_email5']);
+/*
+                $spreadsheet->setActiveSheetIndex(1);
+
+                $spreadsheet->setActiveSheetIndex(1);
+$styleArrayEnrollment = [
+    'font' => [
+        'bold' => true,
+    ],
+    'alignment' => [
+        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
+        'height' => '10',
+    ],
+    'borders' => [
+        'top' => [
+            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+        ],
+        'bottom' => [
+            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+        ],
+        'left' => [
+            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+        ],
+        'right' => [
+            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+        ],
+    ],
+    'fill' => [
+        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+    ],
+];
+ */
+//$spreadsheet->getActiveSheet()->getRowDimension('1')->setRowHeight(100);
+
+
+$writer = new Xlsx($spreadsheet);
+$writer->save('sheets/hell.xlsx');
+$file = "sheets/hell.xlsx";
+}
+header('Content-disposition: attachment; filename='.$file);
+header('Content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+header('Content-Length: ' . filesize($file));
+header('Content-Transfer-Encoding: binary');
+header('Cache-Control: must-revalidate');
+header('Pragma: public');
+flush();
+readfile($file);
+?>
+
+
